@@ -1,0 +1,6 @@
+<Solution>
+  <Project Path="../Proyecto.Infraestructure/ProyectoBDII.Infraestructure.csproj" Id="ecf8e2fe-a1b6-40bc-b897-c9ba95bc9414" />
+  <Project Path="../ProyectoBDII.Application/ProyectoBDII.Application.csproj" Id="a8165f48-1199-4d12-bc8b-0c9cb40f266e" />
+  <Project Path="../ProyectoBDII.Domain/ProyectoBDII.Domain.csproj" />
+  <Project Path="ProyectoBDII.csproj" />
+</Solution>
