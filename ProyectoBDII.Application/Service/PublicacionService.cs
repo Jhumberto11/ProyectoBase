@@ -98,7 +98,7 @@ namespace ProyectoBDII.Application.Service
             return await _publicacionRepository.GetAllAsync();
         }
 
-        public async Task<List<Publicacion>> ObtenerPorCategoria(string name)
+        public async Task<List<Publicacion>> ObtenerPublicacionesPorCategoria(string name)
         {
             var c = await _categoriaRepository.GetByName(name);
 
