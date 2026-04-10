@@ -78,7 +78,7 @@ builder.Services.AddScoped<IPublicacionesRepository, PublicacionesRepositories>(
 
 builder.Services.AddScoped<UserService>();
 builder.Services.AddScoped<CategoriasService>();
-
+builder.Services.AddScoped<PublicacionService>();
 
 
 

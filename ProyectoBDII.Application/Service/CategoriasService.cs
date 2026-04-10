@@ -20,6 +20,12 @@ namespace ProyectoBDII.Application.Service
             return await _repository.GetAllAsync();
         }
 
+
+        public async Task<Categoria?> CheckCategoriaExist(string name)
+        {
+            return await _repository.GetByName(name);
+        }
+
        
 
         public async Task<Categoria> CrearCategoria(Categoria categoria)
@@ -91,6 +97,8 @@ namespace ProyectoBDII.Application.Service
 
             return await _repository.UpdateAsync(existing);
         }
+
+
 
 
     }

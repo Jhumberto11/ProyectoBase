@@ -38,7 +38,7 @@ namespace ProyectoBDII.Infraestructure.Persistencia
 
         public async Task<List<Publicacion>> GetByCategoryIdAsync(string categoryId)
         {
-            return await _publicaciones.Find(p => p.Id == categoryId).ToListAsync();
+            return await _publicaciones.Find(p => p.CategoryId == categoryId).ToListAsync();
         }
 
         public async Task<Publicacion?> GetByIdAsync(string id)
@@ -55,6 +55,18 @@ namespace ProyectoBDII.Infraestructure.Persistencia
         {
             var result = await _publicaciones.ReplaceOneAsync(p => p.Id == publicacion.Id, publicacion);
             return result.MatchedCount > 0;
+        }
+
+        public async Task<List<Publicacion>> GetMyPublications(string id)
+        {
+            return await _publicaciones.Find(p=>p.SellerId==id).ToListAsync();
+        }
+
+        public async Task<List<Publicacion>> GetLowerThan(decimal price)
+        {
+            var result = await _publicaciones.Find(p => p.Price < price).ToListAsync();
+
+            return result;
         }
     }
 }

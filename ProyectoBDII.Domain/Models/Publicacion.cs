@@ -44,7 +44,7 @@ namespace MarketplaceApi.Models
 
 
         [BsonElement("images")]
-        public List<PublicacionImagenes> Images { get; set; } = new();
+        public List<PublicacionImagenes>? Images { get; set; } = new();
 
         [BsonElement("tags")]
         public List<string> Tags { get; set; } = new();

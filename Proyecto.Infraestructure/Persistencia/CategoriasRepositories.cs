@@ -51,7 +51,10 @@ namespace ProyectoBDII.Infraestructure.Persistencia
 
         public async Task<Categoria?> GetByName(string name)
         {
-            return await _categorias.Find(c=> c.Name == name).FirstOrDefaultAsync();
+            var result = await _categorias.Find(c => c.Name == name).FirstOrDefaultAsync();
+            
+
+            return result;
         }
 
         public async Task<Categoria?> GetBySlugAsync(string slug)

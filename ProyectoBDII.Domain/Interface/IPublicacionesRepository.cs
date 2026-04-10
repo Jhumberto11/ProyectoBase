@@ -54,5 +54,10 @@ namespace ProyectoBDII.Domain.Interface
         /// <returns></returns>
         Task<bool> DeleteAsync(string id);
 
+        Task<List<Publicacion>> GetMyPublications(string id);
+
+        Task<List<Publicacion>> GetLowerThan(decimal price);
+
+
     }
 }
