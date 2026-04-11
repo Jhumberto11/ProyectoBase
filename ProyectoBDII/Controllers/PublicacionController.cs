@@ -34,45 +34,66 @@ namespace ProyectoBDII.Controllers
         [HttpPost("crear")]
         public async Task<ActionResult<string>> CrearPublicacion([FromBody] CrearPublicacionDto dto)
         {
-            // Obtener el ID del vendedor desde el token
-            var sellerId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            if (string.IsNullOrEmpty(sellerId))
-                return Unauthorized(new { message = "Token inválido o expirado." });
 
-            // Validar que la categoría existe
 
-            
-
-            var categoria = await _categoriaService.CheckCategoriaExist(dto.CategoryId);
-            if (categoria == null || !categoria.IsActive)
-                return BadRequest(new { message = "Categoría inválida o inactiva." });
-
-            // Crear la nueva publicación
-            var publicacion = new Publicacion
+            try
             {
-                Title = dto.Title,
-                Description = dto.Description,
-                Price = dto.Price,
-                Currency = dto.Currency,
-                Condition = dto.Condition,
-                Status = "active", // Por defecto "active"
-                CategoryId = categoria.Id,
-                SellerId = sellerId,
-                LocationCity = dto.LocationCity,
-                LocationDepartment = dto.LocationDepartment,
-                Tags = dto.Tags,
-                Attributes = ConvertAttributesBson(dto.Attributes), // Convertir el diccionario a BsonDocument
-                CreatedAt = DateTime.UtcNow
-            };
+                // Obtener el ID del vendedor desde el token
+                var sellerId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+                if (string.IsNullOrEmpty(sellerId))
+                    return Unauthorized(new { message = "Token inválido o expirado." });
 
-            var createdPublicacion = await _publicacionService.CrearPublicacion(publicacion);
+                // Validar que la categoría existe
 
-            return createdPublicacion;
+
+
+                var categoria = await _categoriaService.CheckCategoriaExist(dto.CategoryId);
+                if (categoria == null || !categoria.IsActive)
+                    return BadRequest(new { message = "Categoría inválida o inactiva." });
+
+                // Crear la nueva publicación
+                var publicacion = new Publicacion
+                {
+                    Title = dto.Title,
+                    Description = dto.Description,
+                    Price = dto.Price,
+                    Currency = dto.Currency,
+                    Condition = dto.Condition,
+                    Status = "active", // Por defecto "active"
+                    CategoryId = categoria.Id,
+                    SellerId = sellerId,
+                    LocationCity = dto.LocationCity,
+                    LocationDepartment = dto.LocationDepartment,
+                    Tags = dto.Tags,
+                    Attributes = ConvertAttributesBson(dto.Attributes), // Convertir el diccionario a BsonDocument
+                    CreatedAt = DateTime.UtcNow
+                };
+
+                var createdPublicacion = await _publicacionService.CrearPublicacion(publicacion);
+
+                return createdPublicacion;
+            }
+            catch(MongoDB.Driver.MongoWriteException e) when (e.WriteError.Code==121)
+            {
+               return BadRequest( new
+                {
+                    message = "Error con la integridad de datos",
+                    details = "La publicacion no cumple con las reglas de validacion (ej : Precio Minimo, moneda invaalidaa o titulo muy corto)"
+                });
+
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { message = ex.Message });
+            }
         }
 
         [HttpPut("actualizar/{id}")]
         public async Task<ActionResult<Publicacion>> Update(string id, [FromBody] ActualizarPublicacionDto dto)
         {
+
+
+            
             // Obtener el ID del vendedor desde el token
             var sellerId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             if (string.IsNullOrEmpty(sellerId))
