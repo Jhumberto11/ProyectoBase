@@ -291,5 +291,39 @@ namespace ProyectoBDII.Controllers
 
             return bsonDoc;
         }
+
+        [HttpGet("publicaciones_test")]
+        public async Task<ActionResult> Alltest([FromQuery] int page = 1, [FromQuery] int pageSize = 10)
+        {
+            try
+            {
+
+                if (page <= 0) page = 1;
+                if (pageSize <= 0 || pageSize > 100) pageSize = 10;
+
+                var (items, total) = await _publicacionService.ObtenerPublicacionesPaginadas(page, pageSize);
+
+                var totalPages = (int)Math.Ceiling((double)total / pageSize);
+
+                return Ok(new
+                {
+                    Message = "publicaciones recuperadas con éxito",
+                    TotalRecords = total,
+                    TotalPages = totalPages,
+                    CurrentPage = page,
+                    PageSize = pageSize,
+                    Data = items
+                });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new
+                {
+                    message = "Error inesperado al recuperar categorías.",
+                    details = ex.Message
+                });
+            }
+
+        }
     }
 }

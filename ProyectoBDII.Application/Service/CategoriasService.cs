@@ -98,7 +98,10 @@ namespace ProyectoBDII.Application.Service
             return await _repository.UpdateAsync(existing);
         }
 
-
+        public async Task<(List<Categoria> Items, long Total)> ObtenerCategoriasPaginadas(int page, int pageSize)
+        {
+            return await _repository.ObtenerCategoriasPaginadas(page, pageSize);
+        }
 
 
     }
