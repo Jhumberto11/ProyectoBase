@@ -49,7 +49,7 @@ namespace ProyectoBDII.Controllers
                 return BadRequest(new
                 {
                     message = "Error de integridad de datos.",
-                    details = "La publicación no cumple con las reglas de validación (ej: precio mínimo, moneda inválida o título muy corto)."
+                    details = "Los datos del usuario no cumplen con las reglas definidas en el servidor."
                 });
             }
             catch (Exception ex)
