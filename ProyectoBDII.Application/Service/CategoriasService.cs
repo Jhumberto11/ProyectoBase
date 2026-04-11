@@ -23,7 +23,7 @@ namespace ProyectoBDII.Application.Service
 
         public async Task<Categoria?> CheckCategoriaExist(string name)
         {
-            return await _repository.GetByName(name);
+            return await _repository.GetByIdAsync(name);
         }
 
        
