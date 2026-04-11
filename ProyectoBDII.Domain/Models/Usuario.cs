@@ -25,7 +25,7 @@ namespace MarketplaceApi.Models
         public string? Phone { get; set; }
 
         [BsonElement("profileImageUrl")]
-        public string? ProfileImageUrl { get; set; }
+        public string? ProfileImageUrl { get; set; } 
 
         [BsonElement("city")]
         public string? City { get; set; }
