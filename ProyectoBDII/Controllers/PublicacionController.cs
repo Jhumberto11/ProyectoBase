@@ -73,18 +73,28 @@ namespace ProyectoBDII.Controllers
 
                 return createdPublicacion;
             }
-            catch(MongoDB.Driver.MongoWriteException e) when (e.WriteError.Code==121)
+            catch (MongoDB.Driver.MongoWriteException ex) when (ex.WriteError.Code == 121)
             {
-               return BadRequest( new
+                // Error de validación de esquema (JSON Schema)
+                return BadRequest(new
                 {
-                    message = "Error con la integridad de datos",
-                    details = "La publicacion no cumple con las reglas de validacion (ej : Precio Minimo, moneda invaalidaa o titulo muy corto)"
+                    message = "Error de integridad de datos.",
+                    details = "La publicación no cumple con las reglas de validación (ej: precio mínimo, moneda inválida o título muy corto)."
                 });
-
+            }
+            catch (MongoDB.Driver.MongoWriteException ex) when (ex.WriteError.Code == 11000)
+            {
+                // Por si tienes un índice único en el título por ejemplo
+                return Conflict(new { message = "Ya existe una publicación con datos duplicados." });
             }
             catch (Exception ex)
             {
-                return BadRequest(new { message = ex.Message });
+                // Captura cualquier otro error inesperado (como fallos de conexión a Mongo)
+                return StatusCode(500, new
+                {
+                    message = "Ocurrió un error inesperado al procesar la publicación.",
+                    details = ex.Message
+                });
             }
         }
 
