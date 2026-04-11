@@ -126,6 +126,38 @@ namespace ProyectoBDII.Controllers
 
         }
 
+        [HttpGet("publicaciones/-{sellerId}")]
+        public async Task<List<PublicacionMarketDto>> AllbySellerId(string sellerId)
+        {
+
+            var publicaciones = await _publicacionService.ObtenerPublicacionesPorVendedor(sellerId);
+            List<PublicacionMarketDto> publiDto = new List<PublicacionMarketDto>();
+
+            foreach (var p in publicaciones)
+            {
+                var publicacionDto = new PublicacionMarketDto()
+                {
+                    Id = p.Id,
+                    Title = p.Title,
+                    Condition = p.Condition,
+                    Status = p.Status,
+                    Descripcion = p.Description,
+                    Price = p.Price,
+                    CreatedAt = p.CreatedAt,
+                    SelleId = p.SellerId,
+                    CategoryId = p.CategoryId,
+                    Tags = p.Tags
+
+
+                };
+                publiDto.Add(publicacionDto);
+            }
+
+
+            return publiDto;
+
+        }
+
 
 
 

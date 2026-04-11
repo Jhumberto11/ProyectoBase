@@ -226,8 +226,11 @@ namespace ProyectoBDII.Application.Service
             return await _publicacionRepository.GetLowerThan(price);
         }
 
-
-
-
+        //filtro por sellerId
+        public async Task<List<Publicacion>> ObtenerPublicacionesPorVendedor(string Id)
+        {
+            return await _publicacionRepository.GetBySellerIdAsync(Id);
+        }
+        
     }
 }
