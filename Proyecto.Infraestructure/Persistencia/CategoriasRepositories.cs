@@ -62,6 +62,17 @@ namespace ProyectoBDII.Infraestructure.Persistencia
             return await _categorias.Find(c => c.Slug == slug).FirstOrDefaultAsync();
         }
 
+        public async Task<(List<Categoria> Items, long Total)> ObtenerCategoriasPaginadas(int page, int pageSize)
+        {
+            var total = await _categorias.CountDocumentsAsync(_ => true);
+            var items = await _categorias.Find(_ => true)
+                                         .Skip((page - 1) * pageSize)
+                                         .Limit(pageSize)
+                                         .ToListAsync();
+            return (items, total);
+        }
+
+
         public async Task<bool> UpdateAsync(Categoria categoria)
         {
             categoria.UpdatedAt = DateTime.UtcNow;
