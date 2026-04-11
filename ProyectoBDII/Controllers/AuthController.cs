@@ -42,7 +42,15 @@ namespace ProyectoBDII.Controllers
 
                 return Ok("Usuario Registrado con Exito");
             }
-            catch (InvalidOperationException ex)
+            catch (MongoDB.Driver.MongoWriteException e)
+            {
+                if(e.WriteError.Category == MongoDB.Driver.ServerErrorCategory.Uncategorized && e.WriteError.Code == 121)
+                {
+                    return BadRequest(new { message = $"Error de integridad: Los datos no cumplen con las reglas de la base de datos" });
+                }
+                return StatusCode(500, "Error al escribir en la base de daatos");
+            }
+            catch(Exception ex)
             {
                 return BadRequest(new { message = ex.Message });
             }
