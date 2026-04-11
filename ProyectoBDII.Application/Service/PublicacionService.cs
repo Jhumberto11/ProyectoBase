@@ -112,7 +112,8 @@ namespace ProyectoBDII.Application.Service
                             errorMessages.AppendLine($"El atributo '{def.Key}' debe ser texto.");
 
                         if (def.Options != null && !def.Options.Contains(value.AsString))
-                            errorMessages.AppendLine($"El atributo '{def.Key}' tiene un valor inválido.");
+                            
+                            errorMessages.AppendLine($"El atributo '{def.Key}' tiene un valor inválido.[{string.Join(", ",def.Options)}]");
                         break;
 
                     default:
