@@ -126,7 +126,7 @@ namespace ProyectoBDII.Controllers
 
         }
 
-        [HttpGet("publicaciones/-{sellerId}")]
+        [HttpGet("publicaciones/sellerId-{sellerId}")]
         public async Task<List<PublicacionMarketDto>> AllbySellerId(string sellerId)
         {
 
