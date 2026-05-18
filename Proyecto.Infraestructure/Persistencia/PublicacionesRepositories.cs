@@ -68,5 +68,16 @@ namespace ProyectoBDII.Infraestructure.Persistencia
 
             return result;
         }
+
+        public async Task<(List<Publicacion> Items, long Total)> ObtenerPublicacionesPaginadas(int page, int pageSize)
+        {
+            var total = await _publicaciones.CountDocumentsAsync(_ => true);
+            var items = await _publicaciones.Find(_ => true)
+                                         .Skip((page - 1) * pageSize)
+                                         .Limit(pageSize)
+                                         .ToListAsync();
+            return (items, total);
+        }
+
     }
 }

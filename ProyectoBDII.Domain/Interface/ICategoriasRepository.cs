@@ -17,6 +17,7 @@ namespace ProyectoBDII.Domain.Interface
         Task<bool> ExistsByNameAsync(string name);
         Task<bool> ExistsBySlugAsync(string slug);
         Task<Categoria?> GetByName(string name);
+        Task<(List<Categoria> Items, long Total)> ObtenerCategoriasPaginadas(int page, int pageSize);
 
     }
 }

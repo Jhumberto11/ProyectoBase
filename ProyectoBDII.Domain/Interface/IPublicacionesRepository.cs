@@ -58,6 +58,8 @@ namespace ProyectoBDII.Domain.Interface
 
         Task<List<Publicacion>> GetLowerThan(decimal price);
 
+        Task<(List<Publicacion> Items, long Total)> ObtenerPublicacionesPaginadas(int page, int pageSize);
+
 
     }
 }

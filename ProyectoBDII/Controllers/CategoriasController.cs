@@ -23,11 +23,36 @@ namespace ProyectoBDII.Controllers
 
 
         [HttpGet("allCategorias")]
-        public async Task<ActionResult<List<RespuestaCategorias>>>ObtenerTodas()
+        public async Task<ActionResult> ObtenerTodas([FromQuery] int page = 1, [FromQuery] int pageSize = 10)
         {
-            var categorias = await _categoriasService.ObtenerCategorias();
+            try
+            {
 
-            return Ok(categorias);
+                if (page <= 0) page = 1;
+                if (pageSize <= 0 || pageSize > 100) pageSize = 10;
+
+                var (items, total) = await _categoriasService.ObtenerCategoriasPaginadas(page, pageSize);
+
+                var totalPages = (int)Math.Ceiling((double)total / pageSize);
+
+                return Ok(new
+                {
+                    Message = "Categorías recuperadas con éxito",
+                    TotalRecords = total,
+                    TotalPages = totalPages,
+                    CurrentPage = page,
+                    PageSize = pageSize,
+                    Data = items
+                });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new
+                {
+                    message = "Error inesperado al recuperar categorías.",
+                    details = ex.Message
+                });
+            }
         }
 
         [HttpPost("crearCategoria")]
@@ -55,11 +80,37 @@ namespace ProyectoBDII.Controllers
                 return Ok($"Categoria creada con exito : nombre {categoria.Name}");
 
             }
+            catch (MongoDB.Driver.MongoWriteException ex) when (ex.WriteError.Code == 11000)
+            {
+                // Este bloque captura errores de duplicidad (ej: el Slug ya existe)
+                return Conflict(new
+                {
+                    message = "Error de duplicidad.",
+                    details = "Ya existe una categoría con el mismo nombre o slug. Intente con uno diferente."
+                });
+            }
+            catch (MongoDB.Driver.MongoWriteException ex) when (ex.WriteError.Code == 121)
+            {
+                // Captura el error de validación de esquema (JSON Schema en Mongo)
+                return BadRequest(new
+                {
+                    message = "Error de validación en la base de datos.",
+                    details = "Los datos de la categoría no cumplen con las reglas definidas en el servidor."
+                });
+            }
             catch (InvalidOperationException e)
             {
                 return BadRequest(new { message = e.Message });
-
             }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new
+                {
+                    message = "Ocurrió un error inesperado al crear la categoría.",
+                    details = ex.Message
+                });
+            }
+
         }
 
 

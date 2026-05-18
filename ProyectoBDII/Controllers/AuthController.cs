@@ -41,19 +41,27 @@ namespace ProyectoBDII.Controllers
                 var creado = await _userService.RegisterAsync(usuario, dto.Password);
 
                 return Ok("Usuario Registrado con Exito");
+
             }
-            catch (MongoDB.Driver.MongoWriteException e)
+            catch (MongoDB.Driver.MongoWriteException ex) when (ex.WriteError.Code == 121)
             {
-                if(e.WriteError.Category == MongoDB.Driver.ServerErrorCategory.Uncategorized && e.WriteError.Code == 121)
+                // Este bloque captura específicamente el error de validación de MongoDB (Code 121)
+                return BadRequest(new
                 {
-                    return BadRequest(new { message = $"Error de integridad: Los datos no cumplen con las reglas de la base de datos" });
-                }
-                return StatusCode(500, "Error al escribir en la base de daatos");
+                    message = "Error de integridad de datos.",
+                    details = "Los datos del usuario no cumplen con las reglas definidas en el servidor."
+                });
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
-                return BadRequest(new { message = ex.Message });
+                // Captura cualquier otro error inesperado
+                return StatusCode(500, new
+                {
+                    message = "Ocurrió un error inesperado.",
+                    details = ex.Message
+                });
             }
+
         }
 
 

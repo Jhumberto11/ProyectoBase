@@ -232,6 +232,11 @@ namespace ProyectoBDII.Application.Service
         {
             return await _publicacionRepository.GetBySellerIdAsync(Id);
         }
-        
+
+        public async Task<(List<Publicacion> Items, long Total)> ObtenerPublicacionesPaginadas(int page, int pageSize)
+        {
+            return await _publicacionRepository.ObtenerPublicacionesPaginadas(page, pageSize);
+        }
+
     }
 }
