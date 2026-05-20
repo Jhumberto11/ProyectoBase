@@ -1,8 +1,5 @@
 ﻿using MarketplaceApi.Models;
 using ProyectoBDII.Domain.Interface;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace ProyectoBDII.Application.Service
 {
@@ -72,13 +69,13 @@ namespace ProyectoBDII.Application.Service
             throw new NotImplementedException();
         }
 
-       
+
 
         public Task<Usuario?> UpdateAsync(string id, Usuario usuario)
         {
             throw new NotImplementedException();
         }
 
-        
+
     }
 }

@@ -1,10 +1,14 @@
 using MarketplaceApi.Models;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.Extensions.Options;
-using Microsoft.IdentityModel.Tokens;
+
+using Microsoft.OpenApi;
 using MongoDB.Driver;
 using ProyectoBDII.Application.Service;
+using ProyectoBDII.Application.Service.CassandraService;
 using ProyectoBDII.Domain.Interface;
+using ProyectoBDII.Domain.Settings;
+using ProyectoBDII.Infraestructure;
 using ProyectoBDII.Infraestructure.Persistencia;
 using ProyectoBDII.Infraestructure.Security;
 using ProyectoBDII.Settings.JwSettings;
@@ -18,6 +22,16 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.Configure<MongoDbSetting>(
     builder.Configuration.GetSection("MongoDbSettings"));//Referencia al apartado de la cadena de conexion
+
+builder.Services.Configure<CassandraSettings>(
+    builder.Configuration.GetSection("Cassandra"));
+
+builder.Services.AddSingleton<CassandraContext>();
+
+
+builder.Services.AddControllers();
+// Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
+builder.Services.AddOpenApi();
 
 
 
@@ -38,37 +52,6 @@ builder.Services.AddSingleton<IMongoDatabase>(sp =>
     );
 
 // JWT settings
-builder.Services.Configure<JwSettings>(
-    builder.Configuration.GetSection("JwtSettings"));
-
-var jwtSettings = builder.Configuration.GetSection("JwtSettings").Get<JwSettings>();
-
-builder.Services.AddAuthentication(o =>
-{
-    o.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-    o.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-})
-    .AddJwtBearer(options =>
-    {
-        options.TokenValidationParameters = new TokenValidationParameters
-        {
-            ValidateIssuer = true,
-            ValidateAudience = true,
-            ValidateLifetime = true,
-            ValidateIssuerSigningKey = true,
-
-            ValidIssuer = jwtSettings!.Issuer,
-            ValidAudience = jwtSettings.Audience,
-            IssuerSigningKey = new SymmetricSecurityKey(
-                Encoding.UTF8.GetBytes(jwtSettings.Key))
-        };
-    });
-
-builder.Services.AddAuthorization();
-
-
-
-//Inyeccion de Servicios
 builder.Services.AddScoped<IUsuarioRepository,UserRepository>();
 builder.Services.AddScoped<IPasswordHash,PasswordHasherService>();
 builder.Services.AddScoped<IJwToken, JwTokens>();
@@ -79,14 +62,74 @@ builder.Services.AddScoped<IPublicacionesRepository, PublicacionesRepositories>(
 builder.Services.AddScoped<UserService>();
 builder.Services.AddScoped<CategoriasService>();
 builder.Services.AddScoped<PublicacionService>();
+builder.Services.AddScoped<CassandraMensajeService>();
+
+
+builder.Services.AddAuthentication(o =>
+{
+    o.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+    o.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+}).
+    AddJwtBearer(options =>
+    {
+        options.TokenValidationParameters = new Microsoft.IdentityModel.Tokens.TokenValidationParameters
+        {
+            ValidateIssuer = true,
+            ValidateAudience = true,
+            ValidateIssuerSigningKey = true,
+            ValidateLifetime = true,
+            ValidIssuer = builder.Configuration["Issuer"],
+            ValidAudience = builder.Configuration["Audience"],
+            IssuerSigningKey = new Microsoft.IdentityModel.Tokens.SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Key"])),
+        };
+    });
+
+builder.Services.AddAuthorization();
+builder.Services.AddEndpointsApiExplorer();
 
 
 
-builder.Services.AddControllers();
-// Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
-builder.Services.AddOpenApi();
+
+//Inyeccion de Servicios
+
+
+
+
+
+
+builder.Services.AddSwaggerGen(c =>
+{
+    c.SwaggerDoc("v1", new OpenApiInfo
+    {
+        Title = "Marketplace API",
+        Version = "v1"
+    });
+
+
+    c.AddSecurityDefinition("bearer", new OpenApiSecurityScheme()
+    {
+        Type = SecuritySchemeType.Http,
+        Scheme = "bearer",
+        BearerFormat = "JWT",
+        Description = "JWT Authorization header using the Bearer scheme."
+    });
+
+    c.AddSecurityRequirement(document => new OpenApiSecurityRequirement
+    {
+        [new OpenApiSecuritySchemeReference("bearer", document)] = []
+    });
+
+
+
+});
+
+
 
 var app = builder.Build();
+app.MapOpenApi(); //Activa Swagger
+app.UseSwagger();
+app.UseSwaggerUI();
+
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
