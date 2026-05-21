@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using MarketplaceApi.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using MongoDB.Driver.Core.Servers;
@@ -24,40 +25,48 @@ namespace ProyectoBDII.Controllers
         [HttpPost]
         public async Task<IActionResult> EnviarMensaje([FromBody] MensajesCassandraDto dto)
         {
-            dto.RemitenteId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var user = User.FindFirstValue(ClaimTypes.NameIdentifier);
             if (dto.ConversacionId == null)
             {
-              dto.ConversacionId = $"{dto.RemitenteId}-{dto.DestinatarioId}-{dto.PublicacionId}";
+                dto.ConversacionId = $"{user}-{dto.DestinatarioId}-{dto.PublicacionId}";
             }
 
-           
-                // Lógica para extraer destinatario
-             var partes = dto.ConversacionId.Split('-');
-             if (partes.Length >= 3)
-             {
-                 string user1 = partes[0];
-                 string user2 = partes[1];
-                 string publicacion = partes[2];
+            var partes = dto.ConversacionId.Split('-');
+            if (partes.Length >= 3)
+            {
+                string user1 = partes[0];
+                string user2 = partes[1];
+                string publicacion = partes[2];
 
-                    // Si el remitente es user1, destinatario es user2; si es user2, destinatario es user1
-                 dto.DestinatarioId = dto.RemitenteId == user1 ? user2 : user1;
-                 dto.PublicacionId = publicacion;
-             }
-            
+                // Si el remitente es user1, destinatario es user2; si es user2, destinatario es user1
+                dto.DestinatarioId = user == user1 ? user2 : user1;
+                dto.PublicacionId = publicacion;
+            }
 
+            var mensaje = new Mensaje()
+            {
 
-            dto.FechaEnvio = DateTime.UtcNow;
-            dto.Leido = false;
+                ConversacionId = dto.ConversacionId,
+                RemitenteId = user,
+                DestinatarioId = dto.DestinatarioId,
+                PublicacionId = dto.PublicacionId,
+                Contenido = dto.Contenido,
+            };
 
-            await _service.EnviarMensaje(dto);
+            await _service.EnviarMensaje(mensaje);
 
             return Ok(new
             {
                 mensaje = "Mensaje enviado correctamente",
-                mensajeId = dto.MensajeId,
+                mensajeId = mensaje.MensajeId,
                 conversacionId = dto.ConversacionId
             });
+
+
+
+
         }
+
 
         [HttpGet("conversacion/{conversacionId}")]
         public async Task<IActionResult> ObtenerPorConversacion(string conversacionId)

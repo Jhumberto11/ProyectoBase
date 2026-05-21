@@ -23,9 +23,17 @@ namespace ProyectoBDII.Infraestructure.Security
                 hashedPassword,
                 providedPassword
             );
+            if (result == PasswordVerificationResult.Success) 
+            {
+                return true;
+            }
+            return false;
 
-            return result == PasswordVerificationResult.Success
-                || result == PasswordVerificationResult.SuccessRehashNeeded;
+           
+
+
+
+            
         }
     }
 }

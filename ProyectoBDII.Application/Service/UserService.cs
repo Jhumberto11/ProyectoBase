@@ -46,6 +46,7 @@ namespace ProyectoBDII.Application.Service
                 usuario.PasswordHash,
                 plainPassword
             );
+            if (isValid == false) return null;
 
             return usuario;
         }
