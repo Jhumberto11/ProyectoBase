@@ -62,12 +62,7 @@ namespace ProyectoBDII.Controllers
                 mensajeId = mensaje.MensajeId,
                 conversacionId = dto.ConversacionId
             });
-
-
-
-
         }
-
 
         [HttpGet("conversacion/{conversacionId}")]
         public async Task<IActionResult> ObtenerPorConversacion(string conversacionId)
@@ -91,7 +86,7 @@ namespace ProyectoBDII.Controllers
         {
             var destinatarioId = User.FindFirstValue(ClaimTypes.NameIdentifier);
 
-            var mensaje = await _service.ObtenerMensajeAsync(conversacionId,fechaEnvio,mensajeId);
+            var mensaje = await _service.GetMssg(conversacionId,fechaEnvio,mensajeId);
             if (mensaje == null)
             {
                 return NotFound(new { mensaje = "Mensaje no encontrado" });
@@ -115,7 +110,7 @@ namespace ProyectoBDII.Controllers
                 return BadRequest(new { mensaje = "El ID del mensaje es requerido" });
             }
 
-            var mensaje = await _service.ObtenerMensajeAsync(conversacionId, fechaEnvio, mensajeId);
+            var mensaje = await _service.GetMssg(conversacionId, fechaEnvio, mensajeId);
 
             if (mensaje == null)
             {
@@ -127,7 +122,7 @@ namespace ProyectoBDII.Controllers
                 return Unauthorized(new { mensaje = "No tienes permiso para marcar este mensaje como leído" });
             }
 
-            await _service.MarcarMensajeComoLeído(conversacionId, fechaEnvio, mensajeId);
+            await _service.MarcarAsRead(conversacionId, fechaEnvio, mensajeId);
             return Ok(new { mensaje = "Mensaje marcado como leído correctamente" });
         }
 

@@ -195,10 +195,6 @@ namespace ProyectoBDII.Controllers
             return Ok(publicacionesDto);
 
 
-
-
-
-
         }
 
 
