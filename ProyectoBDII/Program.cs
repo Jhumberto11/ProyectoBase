@@ -59,6 +59,8 @@ builder.Services.AddScoped<IJwToken, JwTokens>();
 builder.Services.AddScoped<ICategoriasRepository, CategoriasRepositories>();
 builder.Services.AddScoped<IPublicacionesRepository, PublicacionesRepositories>();
 builder.Services.AddScoped<IMessageRepository,MessageRepository>();
+builder.Services.AddScoped<ILoginHistorialRepository, HistorialLoginRepository>();
+
 
 
 builder.Services.AddScoped<UserService>();
