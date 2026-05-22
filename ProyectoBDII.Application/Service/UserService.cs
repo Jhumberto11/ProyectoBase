@@ -1,17 +1,21 @@
 ﻿using MarketplaceApi.Models;
 using ProyectoBDII.Domain.Interface;
+using ProyectoBDII.Domain.Interface.Cassandra_Interfaces;
+using ProyectoBDII.Domain.Models;
 
 namespace ProyectoBDII.Application.Service
 {
     public class UserService : IUsuarioService
     {
+        private ILoginHistorialRepository _loginHistoryRepository;
         private readonly IUsuarioRepository _usuarioRepository;
         private readonly IPasswordHash _passwordHasherService;
 
-        public UserService(IUsuarioRepository _uR, IPasswordHash _pS)
+        public UserService(IUsuarioRepository _uR, IPasswordHash _pS, ILoginHistorialRepository _lH)
         {
             _usuarioRepository = _uR;
             _passwordHasherService = _pS;
+            _loginHistoryRepository = _lH;
         }
         public async Task<Usuario> RegisterAsync(Usuario usuario, string plainPassword)
         {
@@ -46,7 +50,18 @@ namespace ProyectoBDII.Application.Service
                 usuario.PasswordHash,
                 plainPassword
             );
+
+
+            var hist = new HistorialLogin() 
+            {
+                UsuarioId = usuario.Id,
+                Estado = isValid
+            };  //Creamos historial
+
+
+            await _loginHistoryRepository.GuardarLoginAsync(hist);
             if (isValid == false) return null;
+            
 
             return usuario;
         }
