@@ -7,7 +7,7 @@ namespace ProyectoBDII.Domain.Models
 {
     public class MensajesCassandraDto
     {
-        public string ConversacionId { get; set; } = string.Empty; // puede ser combinación de remitente-destinatario o generar un hash
+        public string? ConversacionId { get; set; } = null; // puede ser combinación de remitente-destinatario o generar un hash
         public string MensajeId { get; set; } = ObjectId.GenerateNewId().ToString(); // o cualquier ID único
         public string RemitenteId { get; set; } = string.Empty; // ID de MongoDB
         public string DestinatarioId { get; set; } = string.Empty; // ID de MongoDB

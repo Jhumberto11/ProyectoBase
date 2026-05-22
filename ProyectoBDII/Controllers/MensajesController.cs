@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using MarketplaceApi.Models;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Authorization.Infrastructure;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using MongoDB.Driver.Core.Servers;
@@ -76,8 +78,50 @@ namespace ProyectoBDII.Controllers
             return Ok(conversacionIds);
         }
 
+        [HttpGet("{mensajeId}")]
+        public async Task<IActionResult> ObtenerMensaje(string mensajeId, [FromQuery] DateTime fechaEnvio, string conversacionId)
+        {
+            var destinatarioId = User.FindFirstValue(ClaimTypes.NameIdentifier);
 
+            var mensaje = await _service.ObtenerMensajeAsync(conversacionId,fechaEnvio,mensajeId);
+            if (mensaje == null)
+            {
+                return NotFound(new { mensaje = "Mensaje no encontrado" });
+            }
 
+            if (mensaje.RemitenteId != destinatarioId && mensaje.DestinatarioId != destinatarioId)
+            {
+                return Unauthorized(new { mensaje = "No tienes permiso para ver este mensaje" });
+            }
+
+            return Ok(mensaje);
+        }
+
+        [HttpPatch("marcar-leido/{mensajeId}")]
+        public async Task<IActionResult> MarcarMensajeComoLeído(string mensajeId, [FromQuery] DateTime fechaEnvio, string conversacionId)
+        {
+            var destinatarioId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+            if (string.IsNullOrEmpty(mensajeId))
+            {
+                return BadRequest(new { mensaje = "El ID del mensaje es requerido" });
+            }
+
+            var mensaje = await _service.ObtenerMensajeAsync(conversacionId, fechaEnvio, mensajeId);
+
+            if (mensaje == null)
+            {
+                return NotFound(new { mensaje = "Mensaje no encontrado" });
+            }
+
+            if (mensaje.DestinatarioId != destinatarioId)
+            {
+                return Unauthorized(new { mensaje = "No tienes permiso para marcar este mensaje como leído" });
+            }
+
+            await _service.MarcarMensajeComoLeído(conversacionId, fechaEnvio, mensajeId);
+            return Ok(new { mensaje = "Mensaje marcado como leído correctamente" });
+        }
 
     }
 }
