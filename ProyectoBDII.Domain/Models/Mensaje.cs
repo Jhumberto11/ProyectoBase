@@ -5,29 +5,14 @@ namespace MarketplaceApi.Models
 {
     public class Mensaje
     {
-        [BsonId]
-        [BsonRepresentation(BsonType.ObjectId)]
-        public string Id { get; set; } = null!;
 
-        [BsonElement("listingId")]
-        [BsonRepresentation(BsonType.ObjectId)]
-        public string ListingId { get; set; } = null!;
-
-        [BsonElement("senderId")]
-        [BsonRepresentation(BsonType.ObjectId)]
-        public string SenderId { get; set; } = null!;
-
-        [BsonElement("receiverId")]
-        [BsonRepresentation(BsonType.ObjectId)]
-        public string ReceiverId { get; set; } = null!;
-
-        [BsonElement("messageText")]
-        public string MessageText { get; set; } = null!;
-
-        [BsonElement("isRead")]
-        public bool IsRead { get; set; } = false;
-
-        [BsonElement("createdAt")]
-        public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+        public string? ConversacionId { get; set; } // puede ser combinación de remitente-destinatario o generar un hash
+        public string MensajeId { get; set; } = ObjectId.GenerateNewId().ToString(); // o cualquier ID único
+        public string RemitenteId { get; set; } // ID de MongoDB
+        public string DestinatarioId { get; set; } // ID de MongoDB
+        public string PublicacionId { get; set; } // ID de MongoDB
+        public string Contenido { get; set; }
+        public bool Leido { get; set; } = false;
+        public DateTime FechaEnvio { get; set; } = DateTime.UtcNow;
     }
 }

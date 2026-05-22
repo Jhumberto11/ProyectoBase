@@ -7,6 +7,7 @@ using MongoDB.Driver;
 using ProyectoBDII.Application.Service;
 using ProyectoBDII.Application.Service.CassandraService;
 using ProyectoBDII.Domain.Interface;
+using ProyectoBDII.Domain.Interface.Cassandra_Interfaces;
 using ProyectoBDII.Domain.Settings;
 using ProyectoBDII.Infraestructure;
 using ProyectoBDII.Infraestructure.Persistencia;
@@ -57,6 +58,7 @@ builder.Services.AddScoped<IPasswordHash,PasswordHasherService>();
 builder.Services.AddScoped<IJwToken, JwTokens>();
 builder.Services.AddScoped<ICategoriasRepository, CategoriasRepositories>();
 builder.Services.AddScoped<IPublicacionesRepository, PublicacionesRepositories>();
+builder.Services.AddScoped<IMessageRepository,MessageRepository>();
 
 
 builder.Services.AddScoped<UserService>();
