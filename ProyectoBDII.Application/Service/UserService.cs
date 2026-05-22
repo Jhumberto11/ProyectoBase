@@ -56,6 +56,7 @@ namespace ProyectoBDII.Application.Service
             {
                 UsuarioId = usuario.Id,
                 Estado = isValid
+                ,Fecha = DateTime.UtcNow
             };  //Creamos historial
 
 

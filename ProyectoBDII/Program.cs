@@ -67,6 +67,7 @@ builder.Services.AddScoped<UserService>();
 builder.Services.AddScoped<CategoriasService>();
 builder.Services.AddScoped<PublicacionService>();
 builder.Services.AddScoped<CassandraMensajeService>();
+builder.Services.AddScoped<HistorialesServicio>();
 
 
 builder.Services.AddAuthentication(o =>

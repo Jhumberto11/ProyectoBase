@@ -8,8 +8,8 @@ namespace ProyectoBDII.Domain.Models
     {
         
             public string UsuarioId { get; set; }
-            public DateTime Fecha { get; set; } = DateTime.UtcNow;
-            public bool Estado { get; set; } = true; // o "fallido"
+            public DateTime Fecha { get; set; } 
+            public bool Estado { get; set; }
         
 
     }
