@@ -3,7 +3,96 @@ Descripción
 
 Este proyecto proporciona una API para gestionar el registro, login, y la creación, actualización, visualización y eliminación de publicaciones en un marketplace. También incluye la gestión de categorías, lo que permite a los administradores crear nuevas categorías para clasificar productos. La autenticación se realiza mediante tokens generados al hacer login.
 
-Endpoints
+Cassandra Endpoints
+1. GET Mssg
+Obtiene un mensaje específico dentro de una conversación, validando que el usuario autenticado tenga permiso para visualizarlo.
+
+📌Endpoint
+GET /{mensajeId}?fechaEnvio={fechaEnvio}&conversacionId={conversacionId}
+
+🔐Autenticación
+Requiere usuario autenticado.
+El usuario debe ser remitente o destinatario del mensaje.
+
+2. PATCH MarkAsRead
+Marca un mensaje como leído, validando que el usuario autenticado sea el destinatario.
+
+📌Endpoint
+PATCH /marcar-leido/{mensajeId}?fechaEnvio={fechaEnvio}&conversacionId={conversacionId}
+
+🔐 Autenticación
+Requiere usuario autenticado.
+Solo el destinatario puede marcar el mensaje como leído.
+
+3. POST EnviarMensajes
+Permite enviar un mensaje dentro de una conversación.
+Si no se proporciona ConversacionId, el sistema lo genera automáticamente.
+
+📌 Endpoint
+POST /
+
+🔐 Autenticación
+Requiere usuario autenticado.
+El remitente se obtiene automáticamente desde el token (ClaimTypes.NameIdentifier).
+
+📥 Body (JSON)
+{
+  "conversacionId": "string (opcional)",
+  "destinatarioId": "string (requerido si no hay conversacionId)",
+  "publicacionId": "string (requerido si no hay conversacionId)",
+  "contenido": "string"
+}
+
+4. POST HistorialLoginByUser
+Este endpoint permite consultar el historial de accesos de un usuario, incluyendo información relevante como fecha, IP y dispositivo utilizado.
+Se utiliza principalmente para: Auditoría de seguridad. Monitoreo de actividad de usuario. Detección de accesos sospechosos
+
+📌 Endpoint
+POST /{userId}
+
+🔐 Autenticación
+Requiere usuario autenticado (con rol de admin).
+
+🏗️ Flujo interno
+- Se recibe el userId desde la URL
+- Se consulta el servicio _historiales
+- Se obtienen los registros asociados al usuario
+- Se valida si existen resultados
+- Se retorna la lista o una respuesta vacía
+
+5. GET MensajesPorConversación
+Obtiene todos los mensajes asociados a una conversación específica.
+
+📌 Endpoint
+GET /conversacion/{conversacionId}
+
+🔐 Autenticación
+Requiere usuario autenticado.
+
+📥 Parámetros
+| Nombre         | Tipo   | Requerido | Descripción           |
+| -------------- | ------ | --------- | --------------------- |
+| conversacionId | string | ✔️        | ID de la conversación |
+
+6. GET ConversacionesByUser
+Este endpoint permite listar todas las conversaciones en las que el usuario ha participado, sin necesidad de conocer previamente los IDs.
+
+📌 Endpoint
+GET /mis-conversaciones
+
+🔐 Autenticación
+Requiere usuario autenticado.
+El usuarioId se obtiene desde el token.
+
+📦 Respuesta Exitosa
+{
+  "user1-user2-pub123",
+  "user1-user3-pub456",
+  "user1-user4-pub789"
+}
+
+
+Endpoints Generales - MongoDB
 1. Controlador de Registro
 
 POST /api/auth/register
@@ -260,6 +349,4 @@ Devuelve una lista de todas las categorías existentes.
 Conclusión
 
 Con estos endpoints, la API permite gestionar el registro de usuarios, autenticación, creación y administración de publicaciones en el marketplace, así como la creación y gestión de categorías para las publicaciones. También permite realizar búsquedas avanzadas dentro del marketplace.
-
-Este formato debe ser más claro y estructurado, asegurando que los desarrolladores y usuarios de tu API entiendan exactamente cómo interactuar con ella y qué datos se requieren en cada solicitud. Si necesitas más detalles o ajustes, ¡avísame!
 
