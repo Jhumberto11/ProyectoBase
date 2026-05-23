@@ -27,15 +27,25 @@ namespace ProyectoBDII.Application.Service.CassandraService
         }
 
 
-        public async Task<List<string>> ObtenerConversacionesUnicasPorUsuario(string usuarioId)
+        public async Task<List<string>> ObtenerConversacionesUnicasPorUsuario(string usuarioId, DateOnly? fecha)
         {
-            return await _session.ObtenerConversacionesUnicasPorUsuarioAsync(usuarioId);
+            var historial = fecha;
+
+            if (historial == null)
+
+            {
+                historial = DateOnly.FromDateTime(DateTime.UtcNow);
+            }
+
+            DateTime fechatime = historial.Value.ToDateTime(new TimeOnly(0, 0));
+
+            return await _session.ObtenerConversacionesUnicasPorUsuarioAsync(usuarioId, fechatime);
         }
 
 
-        public async Task<List<Mensaje>> ObtenerMensajesPorConversacion(string conversacionId)
+        public async Task<List<Mensaje>> ObtenerMensajesPorConversacion(string conversacionId, int limit)
         {
-            return await _session.ObtenerMensajesPorConversacionAsync(conversacionId);
+            return await _session.ObtenerMensajesPorConversacionAsync(conversacionId, limit);
 
         }
 

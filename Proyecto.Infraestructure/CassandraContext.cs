@@ -18,9 +18,16 @@ namespace ProyectoBDII.Infraestructure
             var cluster = Cluster.Builder()
                 .AddContactPoint(settings.ContactPoint)
                 .WithPort(settings.Port)
+                .WithQueryOptions(new QueryOptions().SetConsistencyLevel(ConsistencyLevel.Quorum))
                 .Build();
 
             Session = cluster.Connect(settings.Keyspace);
         }
     }
 }
+
+
+
+
+
+

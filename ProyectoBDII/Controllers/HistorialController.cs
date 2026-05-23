@@ -16,10 +16,10 @@ namespace ProyectoBDII.Controllers
             _historiales = h;
         }
 
-        [HttpPost("{userId}")]
-        public async Task<IActionResult> HistorialLoginByUser(string userId)
+        [HttpPost("{userId}/{limit?}")]
+        public async Task<IActionResult> HistorialLoginByUser(string userId, int? limit)
         {
-            var result = _historiales.GetHistorialLoginByUser(userId).Result;
+            var result = await _historiales.GetHistorialLoginByUser(userId, limit);
             if (result.Count == 0) return BadRequest("Sin Registros");
             return Ok(result);
         }

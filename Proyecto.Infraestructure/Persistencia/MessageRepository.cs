@@ -62,31 +62,41 @@ namespace ProyectoBDII.Infraestructure.Persistencia
             await ActualizarConversacionUsuario(mensaje.DestinatarioId, mensaje.RemitenteId, mensaje);
         }
 
-        public async Task<List<string>> ObtenerConversacionesUnicasPorUsuarioAsync(string usuarioId)
+        public async Task<List<string>> ObtenerConversacionesUnicasPorUsuarioAsync(string usuarioId, DateTime fecha)
         {
-            var query = @"
+            
+                //  DateTime finDia = fecha.Date.AddDays(1).AddTicks(-1);
+                DateTime inicioDia = DateTime.SpecifyKind(fecha.Date, DateTimeKind.Utc);
+                DateTime finDia = DateTime.SpecifyKind(inicioDia.AddDays(1).AddTicks(-1), DateTimeKind.Utc);
+
+                // La representacion real seria el 23
+                var query = @"
                             SELECT conversacion_id
                             FROM conversaciones_por_usuario
-                            WHERE usuario_id = ?";
+                            WHERE usuario_id = ? AND ultima_fecha <= ?"; 
 
-            var stmt = await _session.PrepareAsync(query);
-            var result = await _session.ExecuteAsync(stmt.Bind(usuarioId));
+                var stmt = await _session.PrepareAsync(query);
+                var result = await _session.ExecuteAsync(stmt.Bind(usuarioId, finDia));
 
-            // Selecciona solo los IDs únicos
-            return result.Select(row => row.GetValue<string>("conversacion_id"))
-                         .Distinct()
-                         .ToList();
+                // Selecciona solo los IDs únicos
+                return result.Select(row => row.GetValue<string>("conversacion_id"))
+                             .Distinct()
+                             .ToList();
+            
         }
 
-        public async Task<List<Mensaje>> ObtenerMensajesPorConversacionAsync(string conversacionId)
+            
+
+        public async Task<List<Mensaje>> ObtenerMensajesPorConversacionAsync(string conversacionId, int limit)
         {
             var query = @"
             SELECT conversacion_id, fecha_envio, mensaje_id, remitente_id, destinatario_id, publicacion_id, contenido, leido
             FROM mensajes_por_conversacion
-            WHERE conversacion_id = ?";
+            WHERE conversacion_id = ?
+            LIMIT ?";
 
             var stmt = await _session.PrepareAsync(query);
-            var result = await _session.ExecuteAsync(stmt.Bind(conversacionId));
+            var result = await _session.ExecuteAsync(stmt.Bind(conversacionId, limit));
 
             return result.Select(row => new Mensaje
             {

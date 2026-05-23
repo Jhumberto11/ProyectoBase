@@ -8,7 +8,8 @@ namespace ProyectoBDII.Domain.Interface.Cassandra_Interfaces
     public interface ILoginHistorialRepository
     {
         Task GuardarLoginAsync(HistorialLogin login);
-        Task<List<HistorialLogin>> ObtenerHistorialPorUsuarioAsync(string usuarioId, int limit = 20);
+
+        Task<List<HistorialLogin>> ObtenerHistorialPorUsuarioAsync(string usuarioId, int limit); 
 
     }
 }

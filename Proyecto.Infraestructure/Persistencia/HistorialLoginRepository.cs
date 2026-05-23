@@ -20,7 +20,8 @@ namespace ProyectoBDII.Infraestructure.Persistencia
 
         public async Task GuardarLoginAsync(HistorialLogin login)
         {
-            var query = @"
+            // Cassandra no soporta transacciones, por lo que cada operación es atómica por sí misma.
+            var query = @" 
             INSERT INTO historial_login (usuario_id, fecha, estado)
             VALUES (?, ?, ?)";
 
@@ -32,12 +33,13 @@ namespace ProyectoBDII.Infraestructure.Persistencia
             ));
         }
 
-        public async Task<List<HistorialLogin>> ObtenerHistorialPorUsuarioAsync(string usuarioId, int limit = 20)
+        public async Task<List<HistorialLogin>> ObtenerHistorialPorUsuarioAsync(string usuarioId, int limit)
         {
+
             var query = $@"
             SELECT usuario_id, fecha, estado
             FROM historial_login
-            WHERE usuario_id = ?
+            WHERE usuario_id = ? 
             LIMIT {limit}";
 
             var stmt = await _session.PrepareAsync(query);

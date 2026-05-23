@@ -10,8 +10,10 @@ namespace ProyectoBDII.Domain.Interface.Cassandra_Interfaces
     {
 
         Task EnviarMensajeAsync(Mensaje mensaje);
-        Task<List<Mensaje>> ObtenerMensajesPorConversacionAsync(string conversacionId);
-        Task<List<string>> ObtenerConversacionesUnicasPorUsuarioAsync(string usuarioId);
+        Task<List<Mensaje>> ObtenerMensajesPorConversacionAsync(string conversacionId, int limit);
+
+        Task<List<string>> ObtenerConversacionesUnicasPorUsuarioAsync(string usuarioId, DateTime fecha);
+
         Task ActualizarConversacionUsuario(string usuarioId, string otroUsuarioId, Mensaje mensaje);
 
         Task MarcarMensajeComoLeído(string conversacionId, DateTime fechaEnvio, string mensajeId);

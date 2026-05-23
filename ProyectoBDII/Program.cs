@@ -167,8 +167,6 @@ using (var scope = app.Services.CreateScope())
         var userRepository = scope.ServiceProvider.GetRequiredService<UserService>();
 
         
-        var result = userRepository.RegisterAsync(adminInit, "Admin123!");
-            
-}
+        var result = userRepository.RegisterAsync(adminInit, "Admin123!");         }
 
 app.Run();

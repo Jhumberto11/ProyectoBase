@@ -14,10 +14,11 @@ namespace ProyectoBDII.Application.Service.CassandraService
             _historialRepository = hR;
         }
 
-        public async Task<List<HistorialLogin>> GetHistorialLoginByUser(string userId)
+        public async Task<List<HistorialLogin>> GetHistorialLoginByUser(string userId, int? limit)
         {
+            int limiteFinal = limit.HasValue && limit.Value > 0 ? limit.Value : 50;
 
-            return await _historialRepository.ObtenerHistorialPorUsuarioAsync(userId);
+            return await _historialRepository.ObtenerHistorialPorUsuarioAsync(userId, limiteFinal);
         }
     }
 }

@@ -64,29 +64,30 @@ namespace ProyectoBDII.Controllers
             });
         }
 
-        [HttpGet("conversacion/{conversacionId}")]
-        public async Task<IActionResult> ObtenerPorConversacion(string conversacionId)
+        [HttpGet("conversacion/{conversacionId}/{limit}")]
+        public async Task<IActionResult> ObtenerPorConversacion(string conversacionId, [FromRoute] int limit)
         {
-            var mensajes = await _service.ObtenerMensajesPorConversacion(conversacionId);
+            var mensajes = await _service.ObtenerMensajesPorConversacion(conversacionId, limit);
 
             return Ok(mensajes);
         }
 
-        [HttpGet("mis-conversaciones")]
-        public async Task<IActionResult> ObtenerMisConversaciones()
+        [HttpGet("mis-conversaciones/{fecha}")]   
+        public async Task<IActionResult> ObtenerMisConversaciones(DateOnly? fecha)
         {
+            var fech = fecha;
             var usuarioId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            var conversacionIds = await _service.ObtenerConversacionesUnicasPorUsuario(usuarioId);
+            var conversacionIds = await _service.ObtenerConversacionesUnicasPorUsuario(usuarioId, fech);
 
             return Ok(conversacionIds);
         }
 
         [HttpGet("{mensajeId}")]
-        public async Task<IActionResult> ObtenerMensaje(string mensajeId, [FromQuery] DateTime fechaEnvio, string conversacionId)
+        public async Task<IActionResult> ObtenerMensaje(string mensajeId, string conversacionId, [FromQuery] DateTime fechaEnvio)
         {
             var destinatarioId = User.FindFirstValue(ClaimTypes.NameIdentifier);
 
-            var mensaje = await _service.GetMssg(conversacionId,fechaEnvio,mensajeId);
+            var mensaje = await _service.GetMssg(conversacionId, fechaEnvio, mensajeId);
             if (mensaje == null)
             {
                 return NotFound(new { mensaje = "Mensaje no encontrado" });
