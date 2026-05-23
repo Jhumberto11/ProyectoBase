@@ -15,11 +15,12 @@ namespace ProyectoBDII.Infraestructure.Security
     public class JwTokens : IJwToken
     {
 
-        private readonly JwSettings _jwtSettings;
 
-        public JwTokens(IOptions<JwSettings> jwtOptions)
+        IConfiguration _configuration;
+
+        public JwTokens(IConfiguration configuration)
         {
-            _jwtSettings = jwtOptions.Value;
+            _configuration = configuration;
         }
 
         public string GenerateToken(Usuario user)
@@ -35,18 +36,15 @@ namespace ProyectoBDII.Infraestructure.Security
             };
 
 
-            var key = new SymmetricSecurityKey(
-                Encoding.UTF8.GetBytes(_jwtSettings.Key));
+            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Key"]));
 
-            var creds = new SigningCredentials(
-                key,
-                SecurityAlgorithms.HmacSha256);
+            var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
 
-            var expires = DateTime.UtcNow.AddMinutes(_jwtSettings.ExpireMinutes);
+            var expires = DateTime.Now.AddDays(7);
 
             var token = new JwtSecurityToken(
-                issuer: _jwtSettings.Issuer,
-                audience: _jwtSettings.Audience,
+                 issuer: _configuration["Issuer"],
+                audience: _configuration["Audience"],
                 claims: claims,
                 expires: expires,
                 signingCredentials: creds

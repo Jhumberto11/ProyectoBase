@@ -1,8 +1,5 @@
 ﻿using MarketplaceApi.Models;
 using ProyectoBDII.Domain.Interface;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace ProyectoBDII.Application.Service
 {
@@ -10,7 +7,7 @@ namespace ProyectoBDII.Application.Service
 
     {
         readonly ICategoriasRepository _repository;
-        public CategoriasService(ICategoriasRepository r) 
+        public CategoriasService(ICategoriasRepository r)
         {
             _repository = r;
         }
@@ -26,7 +23,7 @@ namespace ProyectoBDII.Application.Service
             return await _repository.GetByIdAsync(name);
         }
 
-       
+
 
         public async Task<Categoria> CrearCategoria(Categoria categoria)
         {
@@ -84,7 +81,7 @@ namespace ProyectoBDII.Application.Service
             return updated ? existing : null;
         }
 
-        
+
 
         public async Task<bool> BorrarCategoria(string id, bool isActive)
         {

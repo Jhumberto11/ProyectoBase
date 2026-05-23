@@ -75,7 +75,7 @@ namespace ProyectoBDII.Controllers
 
             var token = _jwToken.GenerateToken(usuario);
 
-            return Ok($"Acceso Concedido {new { Token = token}}");
+            return Ok($"Acceso Concedido {new { Token = token }}");
         }
 
 

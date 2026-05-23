@@ -2,8 +2,6 @@
 using MongoDB.Bson;
 using ProyectoBDII.Domain.Interface;
 using ProyectoBDII.Domain.Models;
-using System;
-using System.Collections.Generic;
 using System.Text;
 
 namespace ProyectoBDII.Application.Service
@@ -112,8 +110,8 @@ namespace ProyectoBDII.Application.Service
                             errorMessages.AppendLine($"El atributo '{def.Key}' debe ser texto.");
 
                         if (def.Options != null && !def.Options.Contains(value.AsString))
-                            
-                            errorMessages.AppendLine($"El atributo '{def.Key}' tiene un valor inválido.[{string.Join(", ",def.Options)}]");
+
+                            errorMessages.AppendLine($"El atributo '{def.Key}' tiene un valor inválido.[{string.Join(", ", def.Options)}]");
                         break;
 
                     default:
@@ -128,11 +126,11 @@ namespace ProyectoBDII.Application.Service
         public async Task<string> CrearPublicacion(Publicacion publicacion)
         {
 
-           
+
 
             var categoria = await _categoriaRepository.GetByIdAsync(publicacion.CategoryId);
             if (categoria is null || !categoria.IsActive)
-                return("La categoría no existe o está inactiva.");
+                return ("La categoría no existe o está inactiva.");
 
 
 
@@ -151,7 +149,7 @@ namespace ProyectoBDII.Application.Service
         }
 
 
-        
+
         public async Task<List<Publicacion>> MisPublicaciones(string id)
         {
             var publications = await _publicacionRepository.GetMyPublications(id);
@@ -161,13 +159,13 @@ namespace ProyectoBDII.Application.Service
 
 
 
-        public async Task<string> ActualizarPublicacion(string  id , Publicacion publicacion)
+        public async Task<string> ActualizarPublicacion(string id, Publicacion publicacion)
         {
             var existing = await _publicacionRepository.GetByIdAsync(id);
             if (existing is null)
                 return null;
 
-            
+
 
             var categoria = await _categoriaRepository.GetByIdAsync(publicacion.CategoryId);
             if (categoria is null || !categoria.IsActive)

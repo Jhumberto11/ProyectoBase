@@ -1,0 +1,57 @@
+services:
+ cassandra-seed:
+  image: cassandra:latest
+  container_name: cassandra-seed
+  environment:
+  - CASSANDRA_CLUSTER_NAME=UeesCluster
+  - CASSANDRA_SEEDS=cassandra-seed
+  - CASSANDRA_ENDPOINT_SNITCH=GossipingPropertyFileSnitch
+  - MAX_HEAP_SIZE=512M
+  - HEAP_NEWSIZE=100M
+  - JVM_OPTS=-Xms512M -Xmx512M
+  ports:
+  - "9042:9042"
+  volumes:
+  - cassandra-seed-data:/var/lib/cassandra
+  networks:
+  - cassandra-net
+
+ cassandra-node2:
+  image: cassandra:latest
+  container_name: cassandra-node2
+  environment:
+  - CASSANDRA_CLUSTER_NAME=UeesCluster
+  - CASSANDRA_SEEDS=cassandra-seed
+  - CASSANDRA_ENDPOINT_SNITCH=GossipingPropertyFileSnitch
+  - MAX_HEAP_SIZE=512M
+  - HEAP_NEWSIZE=100M
+  - JVM_OPTS=-Xms512M -Xmx512M
+  depends_on:
+  - cassandra-seed
+  volumes:
+  - cassandra-node2-data:/var/lib/cassandra
+  networks:
+  - cassandra-net
+
+ cassandra-node3:
+  image: cassandra:latest
+  container_name: cassandra-node3
+  environment:
+  - CASSANDRA_CLUSTER_NAME=UeesCluster
+  - CASSANDRA_SEEDS=cassandra-seed
+  - CASSANDRA_ENDPOINT_SNITCH=GossipingPropertyFileSnitch
+  - MAX_HEAP_SIZE=512M
+  - HEAP_NEWSIZE=100M
+  - JVM_OPTS=-Xms512M -Xmx512M
+  depends_on:
+  - cassandra-seed
+  volumes:
+  - cassandra-node3-data:/var/lib/cassandra
+  networks:
+  - cassandra-net
+networks:
+ cassandra-net:
+volumes:
+ cassandra-seed-data:
+ cassandra-node2-data:
+ cassandra-node3-data:
